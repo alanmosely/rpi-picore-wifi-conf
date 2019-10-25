@@ -1,12 +1,15 @@
 {
-  "name": "raspberry-wifi-conf",
+  "name": "rpi-picore-wifi-conf",
   "version": "0.0.1",
-  "description": "Node RPI Wifi Configuration Application",
+  "description": "Node RPI PiCore Wifi Configuration Application",
   "main": "server.js",
   "scripts": {
-    "test": "npm test",
-    "provision": "apt-get update -y && apt-get install dnsmasq hostapd iw -y",
-    "bootstrap": "wget http://treebeard.home.net:1234/bootstrap/pifi-conf -O bootstrap.sh && chmod u+x bootstrap.sh && ./bootstrap.sh"
+    "provision": "tce-load -wi dhcpcd.tcz hostapd.tcz dnsmasq.tcz iw.tcz node.tcz",
+    "upgrade-node": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | sh ; export NVM_DIR=\"$HOME/.nvm\" ; [ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\" ; unset npm_config_prefix npm_lifecycle_script npm_package_scripts_upgrade_node npm_package_scripts_full_setup ; nvm install 8.16.2",
+    "prep": "npm update ; npm install bower -g ; bower install --allow-root",
+    "disconnect-wlan0": "ifconfig wlan0 down && for k in `ps | awk '/'wlan0'/{print $1}'`; do kill $k 2>/dev/null; done ; ifconfig wlan0 up",
+    "full-setup": "npm run upgrade-node && unset npm_config_prefix npm_lifecycle_script npm_package_scripts_upgrade_node npm_package_scripts_full_setup && source ~/.profile && npm run prep && npm run disconnect-wlan0",
+    "test": "npm test"
   },
   "repository": {
     "type": "git",
@@ -14,20 +17,25 @@
   },
   "keywords": [
     "RaspberryPi",
+    "PiCore",
     "Node",
     "Wifi"
   ],
-  "author": "Shaba Abhiram",
+  "author": "Alan Mosely",
+  "contributors": [
+    "Shaba Abhiram (author of raspberry-wifi-conf)"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sabhiram/raspberry-wifi-conf/issues"
+    "url": "https://github.com/alanmosely/rpi-picore-wifi-conf/issues"
   },
-  "homepage": "https://github.com/sabhiram/raspberry-wifi-conf",
+  "homepage": "https://github.com/alanmosely/rpi-picore-wifi-conf",
   "dependencies": {
     "async": "^0.9.2",
     "body-parser": "^1.18.2",
     "ejs": "^2.5.9",
     "express": "^4.16.3",
+    "move-file": "^1.2.0",
     "underscore": "^1.9.0"
   }
 }
